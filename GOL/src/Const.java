@@ -1,6 +1,8 @@
 /**
  * Created by Alex on 24.08.2016.
  */
+
+
 public interface Const {
     String NAME = "Game of Life";
 
@@ -12,5 +14,7 @@ public interface Const {
     int BTN_PANEL_HEIGHT = 65;
     int OFFSET = 10;
     int SIZE_X = FIELD_SIZE_X * DIAMETER + DIAMETER + OFFSET;
-    int SIZE_Y = FIELD_SIZE_Y * DIAMETER + DIAMETER + BTN_PANEL_HEIGHT + OFFSET;
+    int SIZE_Y = FIELD_SIZE_Y * DIAMETER + DIAMETER + OFFSET + BTN_PANEL_HEIGHT;
+    int BTN_HEIGHT = BTN_PANEL_HEIGHT-35;
+    int BTN_WIDTH = BTN_PANEL_HEIGHT-35;
 }
