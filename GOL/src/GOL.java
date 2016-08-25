@@ -15,6 +15,8 @@ public class GOL {
     private JFrame jFrame;
     private Canvas canvasPanel;
     private boolean[][] field;
+    volatile private boolean onIdle = false;
+
     final private ImageIcon icoFill = new ImageIcon(new ImageIcon(GOL.class.getResource("btnFill.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
     final private ImageIcon icoGo = new ImageIcon(new ImageIcon(GOL.class.getResource("btnGo.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
     final private ImageIcon icoGrid = new ImageIcon(new ImageIcon(GOL.class.getResource("btnGrid.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
@@ -48,15 +50,38 @@ public class GOL {
             }
         });
 
+        JButton startButton = new JButton();
+        startButton.setIcon(icoGo);
+        startButton.setPreferredSize(new Dimension(Const.BTN_WIDTH, Const.BTN_HEIGHT));
+        startButton.setToolTipText("Start idle");
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onIdle = !onIdle;
+                startButton.setToolTipText((!onIdle) ? "Start idle" : "Stop idle");
+                startButton.setIcon((onIdle) ? icoStop : icoGo);
+            }
+        });
+
         JPanel btnPanel = new JPanel();
         btnPanel.add(fillButton);
         btnPanel.add(stepButton);
+        btnPanel.add(startButton);
         jFrame.getContentPane().add(BorderLayout.CENTER, canvasPanel);
         jFrame.getContentPane().add(BorderLayout.SOUTH, btnPanel);
         jFrame.setVisible(true);
 
         fillField();
         canvasPanel.repaint();
+
+        while (true) {
+            if (onIdle) {
+                nextGeneration();
+                canvasPanel.repaint();
+                try {
+                    Thread.sleep(Const.DELAY);
+                } catch (InterruptedException e) { e.printStackTrace(); }
+            }
+        }
     }
 
     public static void main(String[] args){

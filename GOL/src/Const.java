@@ -17,4 +17,5 @@ public interface Const {
     int SIZE_Y = FIELD_SIZE_Y * DIAMETER + DIAMETER + OFFSET + BTN_PANEL_HEIGHT;
     int BTN_HEIGHT = BTN_PANEL_HEIGHT-35;
     int BTN_WIDTH = BTN_PANEL_HEIGHT-35;
+    int DELAY = 200;
 }
