@@ -16,6 +16,10 @@ public class GOL {
     private Canvas canvasPanel;
     private boolean[][] field;
     final private ImageIcon icoFill = new ImageIcon(new ImageIcon(GOL.class.getResource("btnFill.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
+    final private ImageIcon icoGo = new ImageIcon(new ImageIcon(GOL.class.getResource("btnGo.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
+    final private ImageIcon icoGrid = new ImageIcon(new ImageIcon(GOL.class.getResource("btnGrid.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
+    final private ImageIcon icoStep = new ImageIcon(new ImageIcon(GOL.class.getResource("btnStep.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
+    final private ImageIcon icoStop = new ImageIcon(new ImageIcon(GOL.class.getResource("btnStop.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
 
     private void go(){
         jFrame = new JFrame(Const.NAME);
@@ -33,13 +37,25 @@ public class GOL {
         fillButton.setToolTipText("Fill randomly");
         fillButton.addActionListener(new FillButtonListener());
 
+        JButton stepButton = new JButton();
+        stepButton.setIcon(icoStep);
+        stepButton.setPreferredSize(new Dimension(Const.BTN_WIDTH, Const.BTN_HEIGHT));
+        stepButton.setToolTipText("Show next generation");
+        stepButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                nextGeneration();
+                canvasPanel.repaint();
+            }
+        });
+
         JPanel btnPanel = new JPanel();
         btnPanel.add(fillButton);
+        btnPanel.add(stepButton);
         jFrame.getContentPane().add(BorderLayout.CENTER, canvasPanel);
         jFrame.getContentPane().add(BorderLayout.SOUTH, btnPanel);
         jFrame.setVisible(true);
 
-        FillField();
+        fillField();
         canvasPanel.repaint();
     }
 
@@ -47,7 +63,7 @@ public class GOL {
         new GOL().go();
     }
 
-    private void FillField(){
+    private void fillField(){
         field = new boolean[Const.FIELD_SIZE_Y][Const.FIELD_SIZE_X];
         for(int i = 0; i < Const.FIELD_SIZE_Y; i++) {
             for (int j = 0; j < Const.FIELD_SIZE_X; j++) {
@@ -56,15 +72,47 @@ public class GOL {
         }
     }
 
+    private void nextGeneration(){
+        boolean[][] newField = new boolean[Const.FIELD_SIZE_Y][Const.FIELD_SIZE_X];
+        for(int i = 0; i < Const.FIELD_SIZE_Y; i++) {
+            for (int j = 0; j < Const.FIELD_SIZE_X; j++) {
+                newField[i][j] = (countNeighbors(i, j) == 3) || ( (countNeighbors(i, j) == 2) && field[i][j]);
+            }
+        }
+        for(int i = 0; i < Const.FIELD_SIZE_Y; i++) {
+            for (int j = 0; j < Const.FIELD_SIZE_X; j++) {
+                field[i][j] = newField[i][j];
+            }
+        }
+    }
+
+    private int countNeighbors(int i, int j){
+        int count = 0;
+        int x = Const.FIELD_SIZE_X;
+        int y = Const.FIELD_SIZE_Y;
+
+        if ( field[(i-1 == -1) ? y-1 : i-1][(j-1 < 0) ? x-1 : j-1] ) count++;
+        if ( field[(i-1 == -1) ? y-1 : i-1][j] ) count++;
+        if ( field[(i-1 == -1) ? y-1 : i-1][(j+1 == x) ? 0 : j+1] ) count++;
+
+        if ( field[i][(j-1 < 0) ? x-1 : j-1] ) count++;
+        if ( field[i][(j+1 == x) ? 0 : j+1] ) count++;
+
+        if ( field[(i+1 == y) ? 0 : i+1][(j-1 < 0) ? x-1 : j-1] ) count++;
+        if ( field[(i+1 == y) ? 0 : i+1][j] ) count++;
+        if ( field[(i+1 == y) ? 0 : i+1][(j+1 == x) ? 0 : j+1] ) count++;
+
+        return count;
+    }
+
     public class FillButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent ev) {
-            FillField();
+            fillField();
             canvasPanel.repaint();
         }
     }
 
     private class Canvas extends JPanel {
-
         @Override
         public void paint(Graphics g) {
             super.paint(g);
