@@ -15,7 +15,9 @@ public class GOL {
     private JFrame jFrame;
     private Canvas canvasPanel;
     private boolean[][] field;
+
     volatile private boolean onIdle = false;
+    volatile private boolean showGrid = false;
 
     private int generation = 1;
 
@@ -33,7 +35,7 @@ public class GOL {
         jFrame.setResizable(false);
 
         canvasPanel = new Canvas();
-        canvasPanel.setBackground(new Color(200, 200, 200));
+        canvasPanel.setBackground(new Color(230, 230, 230));
 
         JButton fillButton = new JButton();
         fillButton.setIcon(icoFill);
@@ -53,6 +55,17 @@ public class GOL {
             }
         });
 
+        JButton gridButton = new JButton();
+        gridButton.setIcon(icoGrid);
+        gridButton.setPreferredSize(new Dimension(Const.BTN_WIDTH, Const.BTN_HEIGHT));
+        gridButton.setToolTipText("Show grid");
+        gridButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showGrid = !showGrid;
+                canvasPanel.repaint();
+            }
+        });
+
         JButton startButton = new JButton();
         startButton.setIcon(icoGo);
         startButton.setPreferredSize(new Dimension(Const.BTN_WIDTH, Const.BTN_HEIGHT));
@@ -69,6 +82,7 @@ public class GOL {
         btnPanel.add(fillButton);
         btnPanel.add(stepButton);
         btnPanel.add(startButton);
+        btnPanel.add(gridButton);
         jFrame.getContentPane().add(BorderLayout.CENTER, canvasPanel);
         jFrame.getContentPane().add(BorderLayout.SOUTH, btnPanel);
         jFrame.setVisible(true);
@@ -148,6 +162,17 @@ public class GOL {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
+            if(showGrid){
+                g.setColor(new Color(150, 150, 150));
+                for(int i = 0; i < Const.FIELD_SIZE_Y; i++) {
+                    g.drawLine(0, Const.OFFSET / 2 + i * Const.DIAMETER + Const.DIAMETER / 2,
+                            Const.SIZE_X, Const.OFFSET / 2 + i * Const.DIAMETER + Const.DIAMETER / 2);
+                }
+                for (int j = 0; j < Const.FIELD_SIZE_X; j++) {
+                    g.drawLine(Const.OFFSET / 2 + j * Const.DIAMETER + Const.DIAMETER / 2, 0,
+                            Const.OFFSET / 2 + j * Const.DIAMETER + Const.DIAMETER / 2, Const.SIZE_Y);
+                }
+            }
             g.setColor(new Color(0, 100, 0));
             for(int i = 0; i < Const.FIELD_SIZE_Y; i++) {
                 for (int j = 0; j < Const.FIELD_SIZE_X; j++) {
