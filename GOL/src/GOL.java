@@ -17,6 +17,8 @@ public class GOL {
     private boolean[][] field;
     volatile private boolean onIdle = false;
 
+    private int generation = 1;
+
     final private ImageIcon icoFill = new ImageIcon(new ImageIcon(GOL.class.getResource("btnFill.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
     final private ImageIcon icoGo = new ImageIcon(new ImageIcon(GOL.class.getResource("btnGo.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
     final private ImageIcon icoGrid = new ImageIcon(new ImageIcon(GOL.class.getResource("btnGrid.png")).getImage().getScaledInstance(Const.BTN_WIDTH, Const.BTN_HEIGHT,Image.SCALE_SMOOTH));
@@ -47,6 +49,7 @@ public class GOL {
             public void actionPerformed(ActionEvent e) {
                 nextGeneration();
                 canvasPanel.repaint();
+                jFrame.setTitle(Const.NAME + "     Generation : " + generation);
             }
         });
 
@@ -77,6 +80,7 @@ public class GOL {
             if (onIdle) {
                 nextGeneration();
                 canvasPanel.repaint();
+                jFrame.setTitle(Const.NAME + "     Generation : " + generation);
                 try {
                     Thread.sleep(Const.DELAY);
                 } catch (InterruptedException e) { e.printStackTrace(); }
@@ -95,6 +99,7 @@ public class GOL {
                 field[i][j] = random.nextBoolean();
             }
         }
+        generation = 1;
     }
 
     private void nextGeneration(){
@@ -109,6 +114,7 @@ public class GOL {
                 field[i][j] = newField[i][j];
             }
         }
+        generation++;
     }
 
     private int countNeighbors(int i, int j){
@@ -134,6 +140,7 @@ public class GOL {
         public void actionPerformed(ActionEvent ev) {
             fillField();
             canvasPanel.repaint();
+            jFrame.setTitle(Const.NAME + "     Generation : " + generation);
         }
     }
 
